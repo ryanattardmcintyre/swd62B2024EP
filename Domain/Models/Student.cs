@@ -10,7 +10,7 @@ namespace Domain.Models
 {
     public class Student
     {
-        [Key] //specifies the primary key
+        [Key()] //specifies the primary key
         public string IdCard { get; set; }
         public string Name { get; set; }    
         public string LastName { get; set; }

@@ -14,6 +14,12 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<AttendanceContext>();
 builder.Services.AddControllersWithViews();
 
+
+//builder.Services.AddScoped(typeof(StudentsRep))
+
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

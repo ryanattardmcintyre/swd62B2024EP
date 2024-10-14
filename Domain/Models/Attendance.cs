@@ -15,13 +15,14 @@ namespace Domain.Models
 
         [ForeignKey("StudentFK")]
         public Student Student{ get; set; }
-        public string StudentFk { get; set; }
+        public string StudentFK { get; set; }
 
         public bool IsPresent { get; set; }
 
         public DateTime Timestamp { get; set; }
 
         public string SubjectFK { get; set; }
+       
         [ForeignKey("SubjectFK")]
         public Subject Subject { get; set; }
     }

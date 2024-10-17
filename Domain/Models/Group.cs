@@ -14,7 +14,7 @@ namespace Domain.Models
 
         public string Programme { get; set; }
 
-        public List<Student> Students { get; set; }
+        public virtual List<Student> Students { get; set; }
 
     }
 }

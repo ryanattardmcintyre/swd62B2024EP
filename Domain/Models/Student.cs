@@ -20,7 +20,7 @@ namespace Domain.Models
 
         //navigational property
         [ForeignKey("GroupFK")] 
-        public Group Group { get; set; }
+        public virtual Group Group { get; set; }
 
 
 

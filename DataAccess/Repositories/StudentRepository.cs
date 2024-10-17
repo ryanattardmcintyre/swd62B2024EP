@@ -14,7 +14,7 @@ namespace DataAccess.Repositories
 
 
     //different types of DI
-    //line 25: an example of Constructor Injection
+    //line 29: an example of Constructor Injection
     //Method Injection - requires you to type [FromServices]+ type of instance you need in every method you  need it in
     //Property Injection - is when you turn the field into a property and assign the instance thru the property not the constructor
 
@@ -24,6 +24,8 @@ namespace DataAccess.Repositories
     public class StudentRepository
     {
         private AttendanceContext myContext;
+
+        //we are assuming that the AttendanceContext instance has already be created somewhere else
         public StudentRepository(AttendanceContext _context) {
             myContext = _context;
         }
@@ -42,7 +44,7 @@ namespace DataAccess.Repositories
         //Create
         public void AddStudent(Student student) {
            
-            myContext.Add(student);
+            myContext.Students.Add(student);
             myContext.SaveChanges();
 
         }

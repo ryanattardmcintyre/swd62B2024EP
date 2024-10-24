@@ -35,7 +35,7 @@ builder.Services.AddControllersWithViews();
 
 
 builder.Services.AddScoped(typeof(StudentRepository));
-
+builder.Services.AddScoped(typeof(GroupRepository));
 
 
 

@@ -2,6 +2,7 @@
 using DataAccess.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Models;
 
 namespace Presentation.Controllers
 {
@@ -13,9 +14,11 @@ namespace Presentation.Controllers
     {
 
         private StudentRepository _studentRepository;
-        public StudentsController(StudentRepository studentRepository)
+        private GroupRepository _groupRepository;
+        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository)
         { 
             _studentRepository= studentRepository;
+            _groupRepository= groupRepository;
         }
 
         public IActionResult Welcome()
@@ -31,19 +34,6 @@ namespace Presentation.Controllers
             return View(list); //as soon as View(list) executes, an outcome similar .ToList() will happen
         
         }
-
-
-        /*public IActionResult Create(Student newStudent)
-        {
-            //1. a check: does this student exist with the email received
-            var student = _studentRepository.GetStudent(newStudent.IdCard);
-            if (student != null)
-            {
-                _studentRepository.AddStudent(newStudent);
-            }
-
-            return Content("Done");
-        }*/
 
 
         [HttpGet] //this is called first when the admin selects the user to be edited
@@ -95,6 +85,60 @@ namespace Presentation.Controllers
         
         }
 
-         
+
+
+        [HttpGet] //when a method is tagged with HttpGet, it means that this method is going to
+        //be called when we click on a link to load the page where to input the student details
+        public IActionResult Create() {
+
+            IQueryable<Group> myGroups = _groupRepository.GetGroups(); //until here no database call is actually done
+            //the view accepts as a model/a data type Student...so we cannot pass an IQueryable<Group>
+
+            //Approach 1 - Creating a ViewModel
+
+            StudentWriteViewModel studentWriteViewModel = new StudentWriteViewModel();
+            studentWriteViewModel.Groups = myGroups.ToList(); //it is here that a database call will be made
+            
+            //Approach 2 - Using ViewBag
+
+            
+            
+            
+            
+            
+            return View(studentWriteViewModel); 
+        }
+
+        [HttpPost] //when a method is tagged with HttpPost, it will be called when you submit
+        //a form with the data and therefore this method will receive some data
+        public IActionResult Create(Student student) {
+
+            //string name = Request.Form["Name"]; //this is just another approach how you can read the data received
+
+            ModelState.Remove("student.Group");//it removes the Group navigational property from the list to check
+
+
+            if(_studentRepository.GetStudent(student.IdCard) != null)
+            {
+                ModelState.AddModelError("IdCard", "Student already exists");
+                return View(student);
+            }
+
+            //the ModelState.IsValid in its default state will validate only any empty fields
+            if (ModelState.IsValid) //triggers any validators which you may have coded
+            {
+                _studentRepository.AddStudent(student);
+                TempData["message"] = "Student is saved in database";
+
+                //redirecting the end user where?
+                return RedirectToAction("Index");
+            }
+
+       
+
+
+            return View(student); 
+        }
+
     }
 }

@@ -1,0 +1,38 @@
+﻿@model Presentation.Models.StudentWriteViewModel
+
+<form method="post" action="/Students/Create" class="container mt-4">
+    <div class="mb-3">
+        <label for="IdCard" class="form-label">Id Card</label>
+        <input type="text" name="Student.IdCard"  class="form-control" maxlength="8" />
+     
+
+        @Html.ValidationMessageFor(model => model.Student.IdCard, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        <label for=" Name" class="form-label">First Name</label>
+        <input type="text" name="Student.Name" class="form-control"  />
+        @Html.ValidationMessageFor(model => model.Student.Name, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        <label for="LastName" class="form-label">Last Name</label>
+        <input type="text" name="Student.LastName"  class="form-control" />
+        @Html.ValidationMessageFor(model => model.Student.LastName, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="mb-3">
+        <label for="GroupFK" class="form-label">Group</label>
+        <select name="Student.GroupFK" class="form-control">
+            <option value="-1" selected>Select a Group</option>
+
+            @foreach(var g in Model.Groups)
+            {
+                <option value="@g.Code" >@g.Code</option>
+            }
+
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

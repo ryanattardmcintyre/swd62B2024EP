@@ -101,17 +101,12 @@ namespace Presentation.Controllers
             
             //Approach 2 - Using ViewBag
 
-            
-            
-            
-            
-            
             return View(studentWriteViewModel); 
         }
 
         [HttpPost] //when a method is tagged with HttpPost, it will be called when you submit
         //a form with the data and therefore this method will receive some data
-        public IActionResult Create(Student student) {
+        public IActionResult Create(Student student, IFormFile file) {
 
             //string name = Request.Form["Name"]; //this is just another approach how you can read the data received
 
@@ -120,13 +115,22 @@ namespace Presentation.Controllers
 
             if(_studentRepository.GetStudent(student.IdCard) != null)
             {
-                ModelState.AddModelError("IdCard", "Student already exists");
+                ModelState.AddModelError("student.IdCard", "Student already exists");
                 return View(student);
             }
 
             //the ModelState.IsValid in its default state will validate only any empty fields
             if (ModelState.IsValid) //triggers any validators which you may have coded
             {
+
+                //we can save the image on the webserver
+
+                //1. generate an original/unique filename for the new image Guid
+                //2. identify the absolute path where to save the image
+                //3. save the image at the absolute path identified using the newly genreated filename
+                //4. will save the relative path into the student instance
+
+                //code saving data into the database
                 _studentRepository.AddStudent(student);
                 TempData["message"] = "Student is saved in database";
 
@@ -134,10 +138,13 @@ namespace Presentation.Controllers
                 return RedirectToAction("Index");
             }
 
-       
+            StudentWriteViewModel myModel = new StudentWriteViewModel();
+            myModel.Student = student;
 
+            myModel.Groups = _groupRepository.GetGroups().ToList();
 
-            return View(student); 
+            TempData["error"] = "Some inputs are incorrect";
+            return View(myModel); 
         }
 
     }

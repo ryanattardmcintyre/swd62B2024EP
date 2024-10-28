@@ -65,6 +65,9 @@ namespace DataAccess.Repositories
             myOriginalStudent.LastName = student.LastName;
             myOriginalStudent.Name = student.Name;
             myOriginalStudent.GroupFK = student.GroupFK;
+            myOriginalStudent.ImagePath = student.ImagePath;
+
+
             //when you need to alter the value of the foreign you don't do it on the navigational property
 
             myContext.SaveChanges();

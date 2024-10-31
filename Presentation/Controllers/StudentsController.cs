@@ -2,6 +2,7 @@
 using DataAccess.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Presentation.Models;
 
 namespace Presentation.Controllers
@@ -60,7 +61,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost] //this is called after the admin submits the updated changes
-        public IActionResult Edit(Student updatedStudent) 
+        public IActionResult Edit(Student updatedStudent, IFormFile file,[FromServices] IWebHostEnvironment host) 
         {
             if (updatedStudent == null)
             {
@@ -71,6 +72,41 @@ namespace Presentation.Controllers
             //this is the place where you apply validation
 
             ModelState.Remove("Group");//it removes the Group navigational property from the list to check
+            ModelState.Remove("ImagePath");
+            ModelState.Remove("file");
+
+            #region File Handling
+
+            if (file != null)
+            {
+                string uniqueFilename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+
+                //C:\Users\attar\source\repos\swd62B2024EP\swd62B2024EP\Presentation\wwwroot\images
+                string absolutePath = host.WebRootPath + "\\images\\" + uniqueFilename;
+
+                using (var f = System.IO.File.Create(absolutePath))
+                {
+                    file.CopyTo(f);
+                }
+
+                string relativePath = "\\images\\" + uniqueFilename;
+
+                //delete the old image
+                var oldStudent = _studentRepository.GetStudent(updatedStudent.IdCard);
+                if (string.IsNullOrEmpty(oldStudent.ImagePath) == false)
+                {
+                        string absolutePathOfOldImage = host.WebRootPath + oldStudent.ImagePath;
+                        System.IO.File.Delete(absolutePathOfOldImage);
+                }
+                
+                updatedStudent.ImagePath = relativePath;
+            }
+            else
+            {
+                var oldStudent = _studentRepository.GetStudent(updatedStudent.IdCard);
+                updatedStudent.ImagePath = oldStudent.ImagePath;
+            }
+            #endregion
 
             if (ModelState.IsValid) //triggers any validators which you may have coded
             {
@@ -106,19 +142,48 @@ namespace Presentation.Controllers
 
         [HttpPost] //when a method is tagged with HttpPost, it will be called when you submit
         //a form with the data and therefore this method will receive some data
-        public IActionResult Create(Student student, IFormFile file) {
+        public IActionResult Create(Student student, IFormFile file, [FromServices] IWebHostEnvironment host) {
 
-            //string name = Request.Form["Name"]; //this is just another approach how you can read the data received
+            #region Creating the ViewModel
 
+            StudentWriteViewModel myModel = new StudentWriteViewModel();
+            myModel.Student = student;
+            myModel.Groups = _groupRepository.GetGroups().ToList();
+
+            #endregion
+
+            #region Validations
             ModelState.Remove("student.Group");//it removes the Group navigational property from the list to check
 
 
             if(_studentRepository.GetStudent(student.IdCard) != null)
             {
                 ModelState.AddModelError("student.IdCard", "Student already exists");
-                return View(student);
+                return View(myModel);
             }
 
+            #endregion
+
+            #region File Handling
+
+            if (file != null)
+            {
+                string uniqueFilename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+
+                //C:\Users\attar\source\repos\swd62B2024EP\swd62B2024EP\Presentation\wwwroot\images
+                string absolutePath = host.WebRootPath + "\\images\\" + uniqueFilename;
+
+                using (var f = System.IO.File.Create(absolutePath))
+                {
+                    file.CopyTo(f);
+                }
+
+                string relativePath = "\\images\\" + uniqueFilename;
+                student.ImagePath = relativePath;
+            }
+            #endregion
+
+            #region Addition of a student to db
             //the ModelState.IsValid in its default state will validate only any empty fields
             if (ModelState.IsValid) //triggers any validators which you may have coded
             {
@@ -137,15 +202,33 @@ namespace Presentation.Controllers
                 //redirecting the end user where?
                 return RedirectToAction("Index");
             }
-
-            StudentWriteViewModel myModel = new StudentWriteViewModel();
-            myModel.Student = student;
-
-            myModel.Groups = _groupRepository.GetGroups().ToList();
+            #endregion
 
             TempData["error"] = "Some inputs are incorrect";
             return View(myModel); 
         }
+
+
+
+        //create a get & post only if you intend to display a page where the user kinds of confirm the deletion
+        public IActionResult Delete(string id, [FromServices] IWebHostEnvironment host)
+        {
+            var oldStudent = _studentRepository.GetStudent(id);
+
+            _studentRepository.DeleteStudent(id);
+
+            if(oldStudent.ImagePath != null)
+            {
+                string absolutePath = host.WebRootPath + oldStudent.ImagePath;
+                if(System.IO.File.Exists(absolutePath))
+                        System.IO.File.Delete(absolutePath);
+            }
+
+            TempData["message"] = "Deleted successfully";
+            return RedirectToAction("Index");
+        }
+
+
 
     }
 }

@@ -1,0 +1,37 @@
+﻿@model Presentation.Models.SelectGroupsSubjectsViewModel
+
+
+<form action="/Attendance/Create" method="get" class="row g-3">
+    <!-- Group Code Selection -->
+    <div class="col-md-6">
+        <label for="groupCode" class="form-label">Select Group</label>
+        <select name="groupCode" id="groupCode" class="form-select">
+            <option value="-1">Select Group</option>
+            @foreach (var group in Model.Groups)
+            {
+                <option value="@group.Code">@group.Programme - @group.Code</option>
+            }
+        </select>
+    </div>
+
+    <!-- Subject Code Selection -->
+    <div class="col-md-6">
+        <label for="subjectCode" class="form-label">Select Subject</label>
+        <select name="subjectCode" id="subjectCode" class="form-select">
+            <option value="-1">Select Subject</option>
+            @foreach (var subject in Model.Subjects)
+            {
+                <option value="@subject.Code">@subject.Name</option>
+            }
+        </select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Take Attendance</button>
+    </div>
+</form>
+
+
+
+

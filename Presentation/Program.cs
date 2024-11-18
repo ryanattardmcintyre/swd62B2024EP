@@ -30,12 +30,11 @@ builder.Services.AddControllersWithViews();
 //Transient: it will create an instance per request per call;
 //Singleton: it will create ONE instance (e.g. StudentRepository instance) for the all the users, for all requests, and for all the calls;
 
-
-
-
-
 builder.Services.AddScoped(typeof(StudentRepository));
 builder.Services.AddScoped(typeof(GroupRepository));
+builder.Services.AddScoped(typeof(SubjectRepository));
+builder.Services.AddScoped(typeof(AttendanceRepository));
+
 
 
 

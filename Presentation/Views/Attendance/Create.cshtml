@@ -1,0 +1,59 @@
+﻿@model Presentation.Models.AttendanceViewModel
+
+<div class="mb-3">
+    <!-- Group Name -->
+    <div class="mb-2">
+        <label class="fw-bold">Group Name:</label>
+        <span>@Model.Group</span>
+    </div>
+    <!-- Subject Name -->
+    <div class="mb-2">
+        <label class="fw-bold">Subject Name:</label>
+        <span>@Model.Subject.Code - @Model.Subject.Name</span>
+    </div>
+</div>
+
+<hr />
+
+<!-- Attendance Form -->
+<form action="/Attendance/Create" method="post">
+
+    <input type="hidden" name="SubjectFK" value="@Model.Subject.Code" />
+    <!-- Attendance Table -->
+    <div class="table-responsive mb-3">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Full Name</th>
+                    <th class="text-center">Absent/Present</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.Students)
+                {
+                    <!-- Table Row -->
+                    <tr>
+                        <!-- Hidden Fields -->
+                        <input type="hidden" name="attendance[@s.IdCard].StudentFK" value="@s.IdCard" />
+                        <td>@s.Name &nbsp; @s.LastName</td>
+                        <td class="text-center">
+                            <div class="form-check">
+                                <input type="checkbox"
+                                   name="attendance[@s.IdCard].IsPresent"
+                                   value="true"
+                                   class="form-check-input"
+                                   checked />
+                                <label class="form-check-label">Present</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">Submit Attendance</button>
+    </div>
+</form>

@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Presentation.Models
 {
@@ -8,5 +9,7 @@ namespace Presentation.Models
         public List<Student> Students { get; set; }
 
         public string Group { get; set; }
+
+        //public List<AttendanceRecord> attendances { get; set; }
     }
 }

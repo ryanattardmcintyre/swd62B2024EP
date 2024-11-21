@@ -10,12 +10,15 @@ namespace Presentation.Controllers
         private StudentRepository _studentRepository;
         private SubjectRepository _subjectRepository;
         private GroupRepository _groupRepository;
+        private AttendanceRepository _attendanceRepository;
 
         public AttendanceController(StudentRepository studentRepository, SubjectRepository subjectRepository,
-            GroupRepository groupRepository) {
+            GroupRepository groupRepository, AttendanceRepository attendanceRepository) {
             _studentRepository= studentRepository;
             _subjectRepository= subjectRepository;
             _groupRepository= groupRepository;
+            _attendanceRepository= attendanceRepository;
+
         }
 
         public IActionResult Index()
@@ -26,11 +29,33 @@ namespace Presentation.Controllers
             SelectGroupsSubjectsViewModel myModel = new SelectGroupsSubjectsViewModel()
             {
                 Subjects = subjects.ToList(),
-                Groups = groups.ToList()
+                Groups = groups.ToList(),
+                PastAttendances = new List<DateTime>()
             };
 
             return View(myModel);
         }
+
+        [HttpPost]
+        public IActionResult Index(string groupCode, string subjectCode)
+        {
+
+            var groups = _groupRepository.GetGroups();
+            var subjects = _subjectRepository.GetSubjects();
+            List<DateTime> pastAttendances = _attendanceRepository.GetAttendances(subjectCode, groupCode)
+     .GroupBy(x => new DateTime(x.Timestamp.Year, x.Timestamp.Month, x.Timestamp.Day, x.Timestamp.Hour, 0, 0))
+     .Select(x => x.Key)
+     .ToList();
+
+            SelectGroupsSubjectsViewModel myModel = new SelectGroupsSubjectsViewModel()
+            {
+                Subjects = subjects.ToList(),
+                Groups = groups.ToList(),
+                PastAttendances = pastAttendances
+            };
+            return View(myModel);
+        }
+
 
 
 
@@ -52,11 +77,11 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(List<string> StudentFK, string SubjectFK, List<bool> IsPresent) {
-        
-            //to do
+        public IActionResult Create(List<Attendance> attendances) {
 
-            return View(); 
+            _attendanceRepository.AddAttendances(attendances);
+            TempData["message"] = "All attendances saved";
+            return RedirectToAction("Index");
         
         }
     }

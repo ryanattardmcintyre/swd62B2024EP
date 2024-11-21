@@ -6,5 +6,8 @@ namespace Presentation.Models
     {
         public List<Group> Groups { get; set; }
         public List<Subject> Subjects { get; set; }
+
+
+        public List<DateTime> PastAttendances { get; set; }
     }
 }

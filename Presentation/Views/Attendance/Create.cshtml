@@ -1,16 +1,17 @@
 ﻿@model Presentation.Models.AttendanceViewModel
 
-<div class="mb-3">
-    <!-- Group Name -->
-    <div class="mb-2">
-        <label class="fw-bold">Group Name:</label>
-        <span>@Model.Group</span>
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-6">
+            <label class="fw-bold">Group:</label>
+            <span>@Model.Group</span>
+        </div>
+        <div class="col-6">
+            <label class="fw-bold">Subject:</label>
+            <span>@Model.Subject.Name</span>
+        </div>
     </div>
-    <!-- Subject Name -->
-    <div class="mb-2">
-        <label class="fw-bold">Subject Name:</label>
-        <span>@Model.Subject.Code - @Model.Subject.Name</span>
-    </div>
+    <hr class="mt-3" />
 </div>
 
 <hr />
@@ -18,7 +19,6 @@
 <!-- Attendance Form -->
 <form action="/Attendance/Create" method="post">
 
-    <input type="hidden" name="SubjectFK" value="@Model.Subject.Code" />
     <!-- Attendance Table -->
     <div class="table-responsive mb-3">
         <table class="table table-bordered table-striped">
@@ -29,17 +29,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var s in Model.Students)
+                @for (var i = 0; i < Model.Students.Count; i++)
                 {
+                    var s = Model.Students[i];
                     <!-- Table Row -->
                     <tr>
                         <!-- Hidden Fields -->
-                        <input type="hidden" name="attendance[@s.IdCard].StudentFK" value="@s.IdCard" />
+                        <input type="hidden" name="attendances[@i].StudentFK" value="@s.IdCard" />
+                        <input type="hidden" name="attendances[@i].SubjectFK" value="@Model.Subject.Code" />
                         <td>@s.Name &nbsp; @s.LastName</td>
                         <td class="text-center">
                             <div class="form-check">
                                 <input type="checkbox"
-                                   name="attendance[@s.IdCard].IsPresent"
+                                   name="attendances[@i].IsPresent"
                                    value="true"
                                    class="form-check-input"
                                    checked />

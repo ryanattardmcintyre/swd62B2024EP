@@ -13,6 +13,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<AttendanceContext>();
+//IdentityUser (IdentityRole) - built-in classes which facilitate the management of users in the database
+
+//alternatively you can create your own model e.g. User
+
+
+
 builder.Services.AddControllersWithViews();
 //builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 

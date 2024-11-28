@@ -30,9 +30,10 @@ namespace DataAccess.Repositories
 
         public void AddAttendances(List<Attendance> attendances)
         {
+            var dateTaken = DateTime.Now; //13:26:30:10
             foreach (var attendance in attendances)
             {
-                attendance.Timestamp = DateTime.Now;
+                attendance.Timestamp = dateTaken;
                 myContext.Attendances.Add(attendance);
             }
             myContext.SaveChanges(); //is being called only once at the of the Add operation...
@@ -46,6 +47,25 @@ namespace DataAccess.Repositories
                                                     );
         }
 
+
+        public IQueryable<Attendance> GetAttendances()
+        {
+
+            return myContext.Attendances;
+        }
+
+        public void UpdateAttendances(List<Attendance> attendances, string subjectCode, string groupCode)
+        {
+            foreach (var attendance in attendances)
+            {
+                var oldAttendanceRecord = GetAttendances().SingleOrDefault(x=>x.Id == attendance.Id);
+                if (oldAttendanceRecord != null)
+                {
+                    oldAttendanceRecord.IsPresent = attendance.IsPresent;
+                }
+            }
+            myContext.SaveChanges();
+        }
 
     }
 }

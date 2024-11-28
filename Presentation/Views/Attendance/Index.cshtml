@@ -28,51 +28,31 @@
 
     <!-- Submit Button -->
     <div class="col-12">
-        <button type="submit" class="btn btn-primary">Take Attendance</button>
+        <button type="submit" class="btn btn-primary" name="whichButton" value="0">Take Attendance</button>
     </div>
+
+    <hr />
+
+    <table>
+        @foreach (var attendance in Model.PastAttendances)
+        {
+            <tr>
+                <td>@attendance.GroupCode</td>
+                <td>@attendance.SubjectCode</td>
+                <td>@attendance.Timestamp.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>
+                    <button type="submit" name="whichButton" value="@attendance.GroupCode|@attendance.SubjectCode|@attendance.Timestamp" 
+                    class="btn btn-sm btn-secondary" >
+                        View Attendance
+                    </button>
+                </td>
+            </tr>
+        }
+
+    </table>
+
+
+
 </form>
 
 
-<form action="/Attendance/Index" method="post" class="row g-3">
-    <!-- Group Code Selection -->
-    <div class="col-md-6">
-        <label for="groupCode" class="form-label">Select Group</label>
-        <select name="groupCode" id="groupCode" class="form-select">
-            <option value="-1">Select Group</option>
-            @foreach (var group in Model.Groups)
-            {
-                    <option value="@group.Code">@group.Programme - @group.Code</option>
-            }
-        </select>
-    </div>
-
-    <!-- Subject Code Selection -->
-    <div class="col-md-6">
-        <label for="subjectCode" class="form-label">Select Subject</label>
-        <select name="subjectCode" id="subjectCode" class="form-select">
-            <option value="-1">Select Subject</option>
-            @foreach (var subject in Model.Subjects)
-            {
-                    <option value="@subject.Code">@subject.Name</option>
-            }
-        </select>
-    </div>
-
-    <!-- Submit Button -->
-    <div class="col-12">
-        <button type="submit" class="btn btn-primary">Show Past Attendances</button>
-    </div>
-</form>
-
-<hr />
-
-<table>
-    @foreach(var attendance in Model.PastAttendances)
-    {
-       <tr>
-           <td>Lesson held on @attendance.ToString("dd/MM/yyyy HH:mm")</td>
-            <td><input type="button" href="/Attendance/Edit?t=@attendance" value="Show Details" class="btn btn-secondary" /></td>
-       </tr> 
-    }
-    
-</table>

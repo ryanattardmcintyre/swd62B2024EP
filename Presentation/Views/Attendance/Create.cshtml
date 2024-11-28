@@ -19,6 +19,29 @@
 <!-- Attendance Form -->
 <form action="/Attendance/Create" method="post">
 
+    @*string subjectCode, string groupCode,bool update=false*@
+    <input type="hidden" name="subjectCode" value="@Model.Subject.Code" />
+    <input type="hidden" name="groupCode" value="@Model.Group" />
+
+
+    
+        @try{
+        
+                if (ViewBag.update == true)
+                    {
+                       <input type="hidden" name="update"   value="true" />
+                    }
+                    else
+                    {
+                       <input type="hidden" name="update" value="false" />
+                    }
+        }
+        catch
+        {
+            <input type="hidden" name="update" value="false" />
+        }
+  
+
     <!-- Attendance Table -->
     <div class="table-responsive mb-3">
         <table class="table table-bordered table-striped">
@@ -35,16 +58,44 @@
                     <!-- Table Row -->
                     <tr>
                         <!-- Hidden Fields -->
+
+                        <input type="hidden" name="attendances[@i].Id" value="@Model.Presences[i].Id" />
                         <input type="hidden" name="attendances[@i].StudentFK" value="@s.IdCard" />
                         <input type="hidden" name="attendances[@i].SubjectFK" value="@Model.Subject.Code" />
+                     
+                      
                         <td>@s.Name &nbsp; @s.LastName</td>
                         <td class="text-center">
                             <div class="form-check">
-                                <input type="checkbox"
+
+                                @if (Model.Presences.Count > 0)
+                                {
+                                    if (Model.Presences[i].Present == true)
+                                    {
+                                        <input type="checkbox"
                                    name="attendances[@i].IsPresent"
                                    value="true"
                                    class="form-check-input"
                                    checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox"
+                                   name="attendances[@i].IsPresent"
+                                   value="true"
+                                   class="form-check-input" />
+                                    }
+                                }
+                                else
+                                {
+                                    <input type="checkbox"
+                                   name="attendances[@i].IsPresent"
+                                   value="true"
+                                   class="form-check-input"
+                                   checked />
+                                }
+
+
                                 <label class="form-check-label">Present</label>
                             </div>
                         </td>

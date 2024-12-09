@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Domain.Models;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Presentation.ActionFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,13 @@ builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.Requir
 
 
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new LogActionFilter());  
+});
+
+
 //builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 //registration of services with the services collection [so the application knows about the existence of these classes that might

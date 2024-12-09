@@ -1,7 +1,9 @@
 ﻿using DataAccess.DataContext;
 using DataAccess.Repositories;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
 using Presentation.ActionFilters;
 using Presentation.Models;
@@ -12,23 +14,28 @@ namespace Presentation.Controllers
     //1. Do not interact with the database (i.e. AttendanceContext) directly from inside the Controllers
     //2. Use the controllers as an extra layer on top of the Repository classes to receive the data from the UI
     //3. Use the controllers to validate/santize/filter/... the data you receive
+
+    [Authorize]
     public class StudentsController : Controller
     {
 
         private StudentRepository _studentRepository;
         private GroupRepository _groupRepository;
-        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository)
+        private LogRepository _logRepository;
+        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository, LogRepository logRepository)
         { 
             _studentRepository= studentRepository;
             _groupRepository= groupRepository;
+            _logRepository= logRepository;
         }
 
+        [AllowAnonymous]
         public IActionResult Welcome()
         {
             return View();
         }
 
-        [LogActionFilter]
+        
         public IActionResult Index() {
 
             //IQueryable<Student>
@@ -127,6 +134,7 @@ namespace Presentation.Controllers
 
         [HttpGet] //when a method is tagged with HttpGet, it means that this method is going to
         //be called when we click on a link to load the page where to input the student details
+       
         public IActionResult Create() {
 
             IQueryable<Group> myGroups = _groupRepository.GetGroups(); //until here no database call is actually done
@@ -146,68 +154,128 @@ namespace Presentation.Controllers
         //a form with the data and therefore this method will receive some data
         public IActionResult Create(Student student, IFormFile file, [FromServices] IWebHostEnvironment host) {
 
-            #region Creating the ViewModel
-
-            StudentWriteViewModel myModel = new StudentWriteViewModel();
-            myModel.Student = student;
-            myModel.Groups = _groupRepository.GetGroups().ToList();
-
-            #endregion
-
-            #region Validations
-            ModelState.Remove("student.Group");//it removes the Group navigational property from the list to check
-
-
-            if(_studentRepository.GetStudent(student.IdCard) != null)
+            try
             {
-                ModelState.AddModelError("student.IdCard", "Student already exists");
-                return View(myModel);
-            }
+    
+        
 
-            #endregion
+                #region Creating the ViewModel
 
-            #region File Handling
+                StudentWriteViewModel myModel = new StudentWriteViewModel();
+                myModel.Student = student;
+                myModel.Groups = _groupRepository.GetGroups().ToList();
 
-            if (file != null)
-            {
-                string uniqueFilename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+                #endregion
 
-                //C:\Users\attar\source\repos\swd62B2024EP\swd62B2024EP\Presentation\wwwroot\images
-                string absolutePath = host.WebRootPath + "\\images\\" + uniqueFilename;
+                #region Validations
+                ModelState.Remove("file");
+                ModelState.Remove("student.Group");//it removes the Group navigational property from the list to check
 
-                using (var f = System.IO.File.Create(absolutePath))
+
+                if (_studentRepository.GetStudent(student.IdCard) != null)
                 {
-                    file.CopyTo(f);
+                    ModelState.AddModelError("student.IdCard", "Student already exists");
+                    return View(myModel);
                 }
 
-                string relativePath = "\\images\\" + uniqueFilename;
-                student.ImagePath = relativePath;
-            }
-            #endregion
+                #endregion
 
-            #region Addition of a student to db
-            //the ModelState.IsValid in its default state will validate only any empty fields
-            if (ModelState.IsValid) //triggers any validators which you may have coded
+                #region File Handling
+
+                if (file != null)
+                {
+                    string uniqueFilename = Guid.NewGuid().ToString() + System.IO.Path.GetExtension(file.FileName);
+
+                    //C:\Users\attar\source\repos\swd62B2024EP\swd62B2024EP\Presentation\wwwroot\images
+                    string absolutePath = host.WebRootPath + "\\images\\" + uniqueFilename;
+
+                    using (var f = System.IO.File.Create(absolutePath))
+                    {
+                        file.CopyTo(f);
+                    }
+
+                    string relativePath = "\\images\\" + uniqueFilename;
+                    student.ImagePath = relativePath;
+                }
+                #endregion
+
+                #region Addition of a student to db
+                //the ModelState.IsValid in its default state will validate only any empty fields
+                if (ModelState.IsValid) //triggers any validators which you may have coded
+                {
+
+                    //we can save the image on the webserver
+
+                    //1. generate an original/unique filename for the new image Guid
+                    //2. identify the absolute path where to save the image
+                    //3. save the image at the absolute path identified using the newly genreated filename
+                    //4. will save the relative path into the student instance
+
+                    //code saving data into the database
+                    _studentRepository.AddStudent(student);
+                    TempData["message"] = "Student is saved in database";
+
+                    //redirecting the end user where?
+                    return RedirectToAction("Index");
+                }
+                #endregion
+
+                TempData["error"] = "Some inputs are incorrect";
+                return View(myModel);
+            }
+            catch (OutOfMemoryException ex)
             {
+                _logRepository.AddLog(new Log()
+                {
+                    Message = ex.Message,
+                    User = User.Identity.Name,
+                    Timestamp = DateTime.Now,
+                    IpAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString()
+                });
 
-                //we can save the image on the webserver
+                //set up a message for the user
+                TempData["error"] = "Try uploading a smaller file";
 
-                //1. generate an original/unique filename for the new image Guid
-                //2. identify the absolute path where to save the image
-                //3. save the image at the absolute path identified using the newly genreated filename
-                //4. will save the relative path into the student instance
+                StudentWriteViewModel myModel = new StudentWriteViewModel();
+                myModel.Student = student;
+                myModel.Groups = _groupRepository.GetGroups().ToList();
 
-                //code saving data into the database
-                _studentRepository.AddStudent(student);
-                TempData["message"] = "Student is saved in database";
-
-                //redirecting the end user where?
-                return RedirectToAction("Index");
+                return View(myModel);
             }
-            #endregion
+            catch (SqlException ex)
+            {
+                //log the error
+                _logRepository.AddLog(new Log()
+                {
+                    Message = ex.Message,
+                    User = User.Identity.Name,
+                    Timestamp = DateTime.Now,
+                    IpAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString()
+                });
 
-            TempData["error"] = "Some inputs are incorrect";
-            return View(myModel); 
+                //set up a message for the user
+                TempData["error"] = "Connection with the database was lost. Try again later";
+
+                return Redirect("Error");
+
+
+            }
+            catch (Exception ex)
+            {
+                //log the error
+                _logRepository.AddLog(new Log()
+                {
+                 Message = ex.Message,
+                  User = User.Identity.Name,
+                   Timestamp = DateTime.Now,
+                    IpAddress = Request.HttpContext.Connection.RemoteIpAddress?.ToString()                
+                });
+
+                //set up a message for the user
+                TempData["error"] = "Error occurred. Try again later";
+                //redirect the user
+                return RedirectToAction("Error", "Home"); // Redirect to Error action
+            }
         }
 
 

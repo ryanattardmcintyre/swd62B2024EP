@@ -3,6 +3,7 @@ using DataAccess.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Presentation.ActionFilters;
 using Presentation.Models;
 
 namespace Presentation.Controllers
@@ -27,6 +28,7 @@ namespace Presentation.Controllers
             return View();
         }
 
+        [LogActionFilter]
         public IActionResult Index() {
 
             //IQueryable<Student>

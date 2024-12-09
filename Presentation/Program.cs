@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.DataContext;
 using DataAccess.Repositories;
+using Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services.AddDbContext<AttendanceContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<AttendanceContext>();
 //IdentityUser (IdentityRole) - built-in classes which facilitate the management of users in the database
 
@@ -40,8 +41,7 @@ builder.Services.AddScoped(typeof(StudentRepository));
 builder.Services.AddScoped(typeof(GroupRepository));
 builder.Services.AddScoped(typeof(SubjectRepository));
 builder.Services.AddScoped(typeof(AttendanceRepository));
-
-
+builder.Services.AddScoped(typeof(LogRepository));
 
 
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DataAccess.DataContext
 {
     //the context class is an abstract representation of the database
-    public class AttendanceContext : IdentityDbContext<IdentityUser>
+    public class AttendanceContext : IdentityDbContext<CustomUser>
     {
         public AttendanceContext(DbContextOptions<AttendanceContext> options)
             : base(options)
@@ -23,6 +23,8 @@ namespace DataAccess.DataContext
         public DbSet<Group> Groups { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Subject> Subjects { get; set; }
+
+        public DbSet<Log> Logs { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,4 +1,5 @@
 ﻿using DataAccess.Repositories;
+using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
@@ -29,7 +30,7 @@ namespace Presentation.ActionFilters
             myLog.Message = $"Action: {context.HttpContext.Request.Path}, Parameters: {context.HttpContext.Request.QueryString.Value}";
 
             //in Program.cs this was registered already so it won't be null
-            LogRepository myLogRepository = context.HttpContext.RequestServices.GetService<LogRepository>();
+            ILogRepository myLogRepository = context.HttpContext.RequestServices.GetService<ILogRepository>();
             myLogRepository.AddLog(myLog);
 
             base.OnActionExecuting(context);

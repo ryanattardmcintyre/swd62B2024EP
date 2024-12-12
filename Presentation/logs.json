@@ -1,0 +1,16 @@
+[
+  {
+    "Id": 0,
+    "Message": "Action: /, Parameters: ",
+    "Timestamp": "2024-12-12T11:02:38.0084+01:00",
+    "User": "Anonymous",
+    "IpAddress": "::1"
+  },
+  {
+    "Id": 0,
+    "Message": "Action: /students/index, Parameters: ",
+    "Timestamp": "2024-12-12T11:03:27.0694905+01:00",
+    "User": "joeborg@gmail.com",
+    "IpAddress": "::1"
+  },
+ {"Id":0,"Message":"Action: /Students/Edit, Parameters: ?id=09876545","Timestamp":"2024-12-12T11:03:50.1430427+01:00","User":"joeborg@gmail.com","IpAddress":"::1"}]

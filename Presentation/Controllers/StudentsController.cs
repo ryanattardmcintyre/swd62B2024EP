@@ -1,5 +1,6 @@
 ﻿using DataAccess.DataContext;
 using DataAccess.Repositories;
+using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,11 @@ namespace Presentation.Controllers
 
         private StudentRepository _studentRepository;
         private GroupRepository _groupRepository;
-        private LogRepository _logRepository;
-        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository, LogRepository logRepository)
+        private ILogRepository _logRepository;
+
+        //if injected i leave LogDBRepository its going to raise an exception: LogFileRepository being selected in the Program.cs is not
+        //LogDBRepository
+        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository, ILogRepository logRepository)
         { 
             _studentRepository= studentRepository;
             _groupRepository= groupRepository;

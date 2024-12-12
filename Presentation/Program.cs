@@ -5,6 +5,7 @@ using DataAccess.Repositories;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Presentation.ActionFilters;
+using Domain.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,9 +51,35 @@ builder.Services.AddScoped(typeof(StudentRepository));
 builder.Services.AddScoped(typeof(GroupRepository));
 builder.Services.AddScoped(typeof(SubjectRepository));
 builder.Services.AddScoped(typeof(AttendanceRepository));
-builder.Services.AddScoped(typeof(LogRepository));
 
 
+
+
+builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
+
+//The service is called ILogRepository BUT since i have 3 different versions, i need to pass also the implementation
+/*
+int setting = 1;
+
+switch (setting)
+{
+    case 1:
+        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
+        break;
+
+    case 2:
+        builder.Services.AddScoped<ILogRepository, LogFileRepository>();
+        break;
+
+    case 3:
+        builder.Services.AddScoped<ILogRepository, LogCloudRepository>();
+        break;
+    default:
+        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
+        break;
+}
+
+*/
 
 
 

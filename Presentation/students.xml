@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Students xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Student>
+    <IdCard>77777</IdCard>
+    <Name>dd</Name>
+    <LastName>dd</LastName>
+    <GroupFK>SWD62A</GroupFK>
+    <ImagePath>\images\f33f1608-8903-4510-9bc0-238be9c11820.jfif</ImagePath>
+  </Student>
+  <Student>
+    <IdCard>5555</IdCard>
+    <Name>dsfasdfas</Name>
+    <LastName>adsfasdf</LastName>
+    <GroupFK>SWD62B</GroupFK>
+    <ImagePath>\images\460aea07-392c-4692-a84a-22d64051d549.jpg</ImagePath>
+  </Student>
+</Students>

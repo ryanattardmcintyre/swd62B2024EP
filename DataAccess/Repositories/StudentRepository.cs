@@ -1,4 +1,5 @@
 ﻿using DataAccess.DataContext;
+using Domain.Interfaces;
 using Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace DataAccess.Repositories
 
     //What is a repository?
     //it is a collection of CRUD operations to manage the data
-    public class StudentRepository
+    public class StudentRepository: IStudentRepository
     {
         private AttendanceContext myContext;
 

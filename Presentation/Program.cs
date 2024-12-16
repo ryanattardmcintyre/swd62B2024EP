@@ -47,28 +47,25 @@ builder.Services.AddControllers(options =>
 //Transient: it will create an instance per request per call;
 //Singleton: it will create ONE instance (e.g. StudentRepository instance) for the all the users, for all requests, and for all the calls;
 
-builder.Services.AddScoped(typeof(StudentRepository));
+ 
 builder.Services.AddScoped(typeof(GroupRepository));
 builder.Services.AddScoped(typeof(SubjectRepository));
 builder.Services.AddScoped(typeof(AttendanceRepository));
-
-
-
-
-builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
-
+ 
 //The service is called ILogRepository BUT since i have 3 different versions, i need to pass also the implementation
-/*
-int setting = 1;
+ 
+int setting = builder.Configuration.GetValue<int>("logSetting");
 
 switch (setting)
 {
     case 1:
         builder.Services.AddScoped<ILogRepository, LogDBRepository>();
+        builder.Services.AddScoped<IStudentRepository, StudentRepository>();
         break;
 
     case 2:
-        builder.Services.AddScoped<ILogRepository, LogFileRepository>();
+        builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
+        builder.Services.AddScoped<IStudentRepository, StudentXmlRepository>();
         break;
 
     case 3:
@@ -79,7 +76,7 @@ switch (setting)
         break;
 }
 
-*/
+ 
 
 
 

@@ -19,9 +19,20 @@
                 <div class="card-body">
                     <h5 class="card-title">@student.Name&nbsp;@student.LastName</h5>
                     <p class="card-text">IdCard: @student.IdCard<br>
-                        Programme: @student.Group.Programme<br>
-                        Group: @student.Group.Code
-                    </p>
+                        
+                        @if(student.Group != null)
+                        {
+                            <span>Programme: @student.Group.Programme</span>
+                        }
+
+                        <br>
+
+                         @if(student.Group != null)
+                        {
+                         <span>Group: @student.Group.Code</span> 
+                        }
+                        
+                        </p>
                     <a href="/Students/Edit?id=@student.IdCard" class="btn btn-primary">Update Details</a>
                     <a href="/Students/Delete?id=@student.IdCard" class="btn btn-primary" onclick="return confirm('Are you sure?')"  >Delete</a>
                 </div>

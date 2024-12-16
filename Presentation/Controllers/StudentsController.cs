@@ -20,13 +20,13 @@ namespace Presentation.Controllers
     public class StudentsController : Controller
     {
 
-        private StudentRepository _studentRepository;
+        private IStudentRepository _studentRepository;
         private GroupRepository _groupRepository;
         private ILogRepository _logRepository;
 
         //if injected i leave LogDBRepository its going to raise an exception: LogFileRepository being selected in the Program.cs is not
         //LogDBRepository
-        public StudentsController(StudentRepository studentRepository, GroupRepository groupRepository, ILogRepository logRepository)
+        public StudentsController(IStudentRepository studentRepository, GroupRepository groupRepository, ILogRepository logRepository)
         { 
             _studentRepository= studentRepository;
             _groupRepository= groupRepository;

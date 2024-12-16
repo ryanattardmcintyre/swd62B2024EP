@@ -22,6 +22,7 @@ namespace DataAccess.Repositories
                 using (var myFile = System.IO.File.CreateText(_fileName))
                 {
                     List<Log> logs = new List<Log>();
+                    l.Id = 1;
                     logs.Add(l);
 
                     //serialize the list
@@ -34,6 +35,8 @@ namespace DataAccess.Repositories
             else //if file already exists
             {
                 var logs = GetLogs().ToList();
+                int nextId = logs.Max(l => l.Id)+1;
+                l.Id = nextId;
                 logs.Add(l);
 
                 //serialize the list

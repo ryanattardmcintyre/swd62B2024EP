@@ -51,7 +51,7 @@ builder.Services.AddControllers(options =>
 builder.Services.AddScoped(typeof(GroupRepository));
 builder.Services.AddScoped(typeof(SubjectRepository));
 builder.Services.AddScoped(typeof(AttendanceRepository));
- 
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 //The service is called ILogRepository BUT since i have 3 different versions, i need to pass also the implementation
  
 int setting = builder.Configuration.GetValue<int>("logSetting");
@@ -60,12 +60,12 @@ switch (setting)
 {
     case 1:
         builder.Services.AddScoped<ILogRepository, LogDBRepository>();
-        builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+        
         break;
 
     case 2:
         builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
-        builder.Services.AddScoped<IStudentRepository, StudentXmlRepository>();
+ 
         break;
 
     case 3:

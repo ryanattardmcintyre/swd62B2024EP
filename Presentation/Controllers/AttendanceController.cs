@@ -1,4 +1,5 @@
 ﻿using DataAccess.Repositories;
+using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Models;
@@ -7,12 +8,12 @@ namespace Presentation.Controllers
 {
     public class AttendanceController : Controller
     {
-        private StudentRepository _studentRepository;
+        private IStudentRepository _studentRepository;
         private SubjectRepository _subjectRepository;
         private GroupRepository _groupRepository;
         private AttendanceRepository _attendanceRepository;
 
-        public AttendanceController(StudentRepository studentRepository, SubjectRepository subjectRepository,
+        public AttendanceController(IStudentRepository studentRepository, SubjectRepository subjectRepository,
             GroupRepository groupRepository, AttendanceRepository attendanceRepository) {
             _studentRepository= studentRepository;
             _subjectRepository= subjectRepository;

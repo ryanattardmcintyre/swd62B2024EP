@@ -6,13 +6,14 @@ using Domain.Models;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Presentation.ActionFilters;
 using Domain.Interfaces;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AttendanceContext>(options =>
-    options.UseSqlServer(connectionString));
+ var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//string connectionString = "Server=LAPTOP-O0I9A16V\\SQLEXPRESS;Database=SWD62B2024Attendance;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+builder.Services.AddDbContext<AttendanceContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -25,10 +26,10 @@ builder.Services.AddDefaultIdentity<CustomUser>(options => options.SignIn.Requir
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add(new LogActionFilter());  
-});
+//builder.Services.AddControllers(options =>
+//{
+//    options.Filters.Add(new LogActionFilter());  
+//});
 
 
 //builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -52,31 +53,34 @@ builder.Services.AddScoped(typeof(GroupRepository));
 builder.Services.AddScoped(typeof(SubjectRepository));
 builder.Services.AddScoped(typeof(AttendanceRepository));
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+builder.Services.AddScoped<ILogRepository, LogDBRepository>();
+
 //The service is called ILogRepository BUT since i have 3 different versions, i need to pass also the implementation
- 
-int setting = builder.Configuration.GetValue<int>("logSetting");
 
-switch (setting)
-{
-    case 1:
-        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
-        
-        break;
+//int setting = builder.Configuration.GetValue<int>("logSetting");
 
-    case 2:
-        builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
- 
-        break;
+//switch (setting)
+//{
+//    case 1:
+//        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
 
-    case 3:
-        builder.Services.AddScoped<ILogRepository, LogCloudRepository>();
-        break;
-    default:
-        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
-        break;
-}
+//        break;
 
- 
+//    case 2:
+//        builder.Services.AddScoped<ILogRepository, LogFileRepository>(x=> new LogFileRepository("logs.json"));
+
+//        break;
+
+//    case 3:
+//        builder.Services.AddScoped<ILogRepository, LogCloudRepository>();
+//        break;
+//    default:
+//        builder.Services.AddScoped<ILogRepository, LogDBRepository>();
+//        break;
+//}
+
+
 
 
 
@@ -84,6 +88,9 @@ switch (setting)
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseMigrationsEndPoint();
+
+/*
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -94,7 +101,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+*/
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

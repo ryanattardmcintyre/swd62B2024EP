@@ -16,7 +16,7 @@ namespace Presentation.Controllers
     //2. Use the controllers as an extra layer on top of the Repository classes to receive the data from the UI
     //3. Use the controllers to validate/santize/filter/... the data you receive
 
-    [Authorize]
+   // [Authorize]
     public class StudentsController : Controller
     {
 

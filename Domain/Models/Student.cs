@@ -12,14 +12,14 @@ namespace Domain.Models
     {
         [Key()] //specifies the primary key
         public string IdCard { get; set; }
-        public string Name { get; set; }    
+        public string Name { get; set; }
         public string LastName { get; set; }
 
         //foreign key property
         public string GroupFK { get; set; }
 
         //navigational property
-        [ForeignKey("GroupFK")] 
+        [ForeignKey("GroupFK")]
         public virtual Group Group { get; set; }
 
         public string? ImagePath { get; set; }
@@ -27,4 +27,8 @@ namespace Domain.Models
 
 
     }
+
+  
+
+
 }
